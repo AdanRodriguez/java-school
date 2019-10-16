@@ -17,6 +17,8 @@ public class ErrorDetail
     private String developermessage;
     private Map<String, List<ValidationError>> errors = new HashMap<>();
 
+    //if no constructor, Java generates default constructor
+
     public String getTitle()
     {
         return title;
