@@ -3,10 +3,7 @@ package com.lambdaschool.school.controller;
 import com.lambdaschool.school.model.ErrorDetail;
 import com.lambdaschool.school.model.Instructor;
 import com.lambdaschool.school.service.InstructorService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +22,16 @@ public class InstructorController
 
     //GET localhost:2019/instructors/instructors
     @ApiOperation(value = "returns all Instructors", response = Instructor.class, responseContainer = "List")
+    @ApiImplicitParams({
+                               @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                                                 value = "Results page you want to retrieve (0..N)"),
+                               @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                                                 value = "Number of records per page."),
+                               @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                                                 value = "Sorting criteria in the format: property(,asc|desc). " +
+                                                         "Default sort order is ascending. " +
+                                                         "Multiple sort criteria are supported.")})
+
     @GetMapping(value = "/instructors", produces = {"application/json"})
     public ResponseEntity<?> listAllInstructors(@PageableDefault(page = 0, size = 3) Pageable pageable)
     {
