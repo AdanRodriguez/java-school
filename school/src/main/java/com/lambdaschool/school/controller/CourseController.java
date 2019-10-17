@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.ArrayList;
 
 @RestController
@@ -26,7 +27,7 @@ public class CourseController
 
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
 
-    //GET localhost:2019/courses/courses
+    //GET localhost:2019/courses/courses/paginal
     @ApiOperation(value = "returns all Courses", response = Course.class, responseContainer = "List")
     @ApiImplicitParams({
                                @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
@@ -38,7 +39,7 @@ public class CourseController
                                                          "Default sort order is ascending. " +
                                                          "Multiple sort criteria are supported.")})
 
-    @GetMapping(value = "/courses", produces = {"application/json"})
+    @GetMapping(value = "/courses/paginal", produces = {"application/json"})
     public ResponseEntity<?> listAllCourses(HttpServletRequest request, @PageableDefault(page = 0, size = 3)Pageable pageable)
     {
         logger.warn("This is a log");
@@ -46,6 +47,18 @@ public class CourseController
 
         logger.info(request.getMethod() + " " + request.getRequestURI() + " accessed!");
         ArrayList<Course> myCourses = courseService.findAll(pageable);
+        return new ResponseEntity<>(myCourses, HttpStatus.OK);
+    }
+
+    ////GET localhost:2019/courses/courses
+    @GetMapping(value = "/courses", produces = {"application/json"})
+    public ResponseEntity<?> listAllCourses(HttpServletRequest request)
+    {
+        logger.warn("This is a log");
+        logger.trace("This is another log");
+
+        logger.info(request.getMethod() + " " + request.getRequestURI() + " accessed!");
+        ArrayList<Course> myCourses = courseService.findAll();
         return new ResponseEntity<>(myCourses, HttpStatus.OK);
     }
 
@@ -75,5 +88,14 @@ public class CourseController
         logger.info(request.getMethod() + " " + request.getRequestURI() + " accessed!" + courseid);
         courseService.delete(courseid);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/course/add",
+                 consumes = {"application/json"})
+    public ResponseEntity<?> addNewCourse(@Valid
+                                          @RequestBody Course course)
+    {
+        courseService.save(course);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
